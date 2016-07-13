@@ -9,22 +9,33 @@ import '../sass/paginator.scss'
  */
 
 function noop () {}
+
+class PaginatroLink extends React.Component {
+  render () {
+    let index = this.props.index
+    return (
+      <a className="cell" key={index} href={index} onClick={ e => this.props.onClick(e, index) }>{index}</a>
+    )
+  }
+}
+
 /**
  * 获取普通的链接
+ *
  * @param{number} start 起始页
  * @param{number} end 结束页
  * @param{function} onClick 点击回调函数
  * @return{array} jsx dom 集合
  */
-
 function getPages (start, end, onClick) {
   if (onClick === undefined) onClick = noop
   let pages = []
   for (let i = start; i <= end; i++) {
-    pages.push(<a className="cell" key={i} href={i} onClick={ (e) => onClick(e, i) }>{i}</a>)
+    pages.push(<PaginatroLink index={i} onClick={onClick} key={i}></PaginatroLink>)
   }
   return pages
 }
+
 
 export default class Paginator extends React.Component {
   constructor (props, context) {
@@ -37,8 +48,6 @@ export default class Paginator extends React.Component {
   }
 
   render () {
-
-
     return (
       <div>
         <a href="prev" className="cell" onClick={ (e) => this.handleClickSpecial(e, -1) }>prev</a>
@@ -51,18 +60,20 @@ export default class Paginator extends React.Component {
 
   /**
    * prev和next的操作
+   *
    * @param{object} event 点击事件
    * @param{number} direction prev或者next
    */
   handleClickSpecial (event, direction) {
     event.preventDefault()
     this.setState({
-      current: this.current + direction
+      current: this.state.current + direction
     })
   }
 
   /**
    * 数字按钮点击
+   *
    * @param{object} event 点击事件
    * @param{number} index 按钮索引
    */
