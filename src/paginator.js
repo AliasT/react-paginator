@@ -10,7 +10,7 @@ import '../sass/paginator.scss'
 
 function noop () {}
 
-class PaginatroLink extends React.Component {
+class PaginatorLink extends React.Component {
   render () {
     let index = this.props.index
     return (
@@ -19,21 +19,19 @@ class PaginatroLink extends React.Component {
   }
 }
 
-/**
- * 获取普通的链接
- *
- * @param{number} start 起始页
- * @param{number} end 结束页
- * @param{function} onClick 点击回调函数
- * @return{array} jsx dom 集合
- */
-function getPages (start, end, onClick) {
-  if (onClick === undefined) onClick = noop
-  let pages = []
-  for (let i = start; i <= end; i++) {
-    pages.push(<PaginatroLink index={i} onClick={onClick} key={i}></PaginatroLink>)
+class PaginatorLinkCom extends React.Component {
+  render () {
+    let props = this.props
+    const start = props.start
+    const end = props.end
+    const onClick = props.onClick
+
+    let pages = []
+    for (let i = start; i <= end; i++) {
+      pages.push(<PaginatorLink index={i} onClick={onClick} key={i}></PaginatorLink>)
+    }
+    return <div className="clearfix">{pages}</div>
   }
-  return pages
 }
 
 
@@ -49,10 +47,11 @@ export default class Paginator extends React.Component {
 
   render () {
     return (
-      <div>
+      <div className="clearfix paginator">
         <a href="prev" className="cell" onClick={ (e) => this.handleClickSpecial(e, -1) }>prev</a>
-        {getPages(1, 3, this.handleClick)}
-        {getPages(6, 10, this.handleClick)}
+        <PaginatorLinkCom start={1} end={3} onClick={this.handleClick} />
+        <PaginatorLinkCom start={this.state.current} end={this.state.current} onClick={this.handleClick} />
+        <PaginatorLinkCom start={6} end={10} onClick={this.handleClick} />
         <a href="next" className="cell" onClick={ (e) => this.handleClickSpecial(e, 1) }>next</a>
       </div>
     )
@@ -79,7 +78,7 @@ export default class Paginator extends React.Component {
    */
   handleClick (event, index) {
     event.preventDefault()
-    console.log(index)
+
   }
 
 }
