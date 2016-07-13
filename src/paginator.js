@@ -10,11 +10,18 @@ import '../sass/paginator.scss'
 
 function noop () {}
 
+class NoopEle extends React.Component {
+  render () {
+    return <a className="cell" href="javascript:void(0);">...</a>
+  }
+}
+
 class PaginatorLink extends React.Component {
   render () {
     let index = this.props.index
+    const className = this.props.className ? "cell " + this.props.className : "cell"
     return (
-      <a className="cell" key={index} href={index} onClick={ e => this.props.onClick(e, index) }>{index}</a>
+      <a className={className} key={index} href={index} onClick={ e => this.props.onClick(e, index) }>{index}</a>
     )
   }
 }
@@ -40,11 +47,41 @@ export default class Paginator extends React.Component {
   }
 
   /**
-   *
+   * 主逻辑
    *
    */
   pagination () {
-    return createPageLink(1, 4, noop)
+    const total = this.state.pages
+    const current = this.state.current
+    const handleClick = this.handleClick
+    const currentEle = <PaginatorLink className="current" key="current-ele" index={current} onClick={handleClick}></PaginatorLink>
+    const NoopLeft = <NoopEle key="left-ele"/>
+    const NoopRight = <NoopEle key="right-ele"/>
+
+    let result = null
+
+    if (total < 7) {
+      result = createPageLink(1, current - 1, handleClick)
+      result.push(currentEle)
+      result.push(createPageLink(current + 1, total, handleClick))
+      return result
+    }
+
+    if (current - 2 <= 3) {
+      result = createPageLink(1, current-1, handleClick)
+      result.push(currentEle)
+      result.push(createPageLink(current+1,  5, handleClick))
+      result.push(NoopRight)
+      result.push(createPageLink(total-1, total, handleClick))
+      return result
+    }
+
+
+    result = createPageLink(1, 2, handleClick)
+    result.push(<NoopEle key="left-ele"/>)
+    result.push(createPageLink(current - 2, current + 2, handleClick))
+    return result
+
   }
 
   render () {
