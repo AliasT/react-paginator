@@ -19,19 +19,13 @@ class PaginatorLink extends React.Component {
   }
 }
 
-class PaginatorLinkCom extends React.Component {
-  render () {
-    let props = this.props
-    const start = props.start
-    const end = props.end
-    const onClick = props.onClick
 
-    let pages = []
-    for (let i = start; i <= end; i++) {
-      pages.push(<PaginatorLink index={i} onClick={onClick} key={i}></PaginatorLink>)
-    }
-    return <div className="clearfix">{pages}</div>
+function createPageLink (start, end, onClick) {
+  let pages = []
+  for (let i = start; i <= end; i++) {
+    pages.push(<PaginatorLink index={i} onClick={onClick} key={i}></PaginatorLink>)
   }
+  return pages
 }
 
 
@@ -45,17 +39,24 @@ export default class Paginator extends React.Component {
     }
   }
 
+  /**
+   *
+   *
+   */
+  pagination () {
+    return createPageLink(1, 4, noop)
+  }
+
   render () {
     return (
       <div className="clearfix paginator">
         <a href="prev" className="cell" onClick={ (e) => this.handleClickSpecial(e, -1) }>prev</a>
-        <PaginatorLinkCom start={1} end={3} onClick={this.handleClick} />
-        <PaginatorLinkCom start={this.state.current} end={this.state.current} onClick={this.handleClick} />
-        <PaginatorLinkCom start={6} end={10} onClick={this.handleClick} />
+        {this.pagination()}
         <a href="next" className="cell" onClick={ (e) => this.handleClickSpecial(e, 1) }>next</a>
       </div>
     )
   }
+
 
   /**
    * prev和next的操作
