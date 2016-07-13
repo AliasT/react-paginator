@@ -59,16 +59,13 @@ export default class Paginator extends React.Component {
     const NoopLeft    = <NoopEle key="left-ele"/>
     const NoopRight   = <NoopEle key="right-ele"/>
 
-    let result = null
-
-
     const d_to_left = current - 1   // distance to left
-    const d_to_right = total -1     // distance to right
+    const d_to_right = total - current    // distance to right
 
     let left  = []
     let right = []
 
-    if (d_to_left <= 6) {
+    if (d_to_left < 6) {
       left.push(createPageLink(1, current - 1, handleClick))
     } else {
       left.push(createPageLink(1, 2, handleClick))
@@ -76,13 +73,15 @@ export default class Paginator extends React.Component {
       left.push(createPageLink(current-2, current-1, handleClick))
     }
 
-    if (d_to_right <= 6) {
-      right.push(createPageLink(current+1, total))
+    if (d_to_right < 6) {
+      right.push(createPageLink(current+1, total, handleClick))
     } else {
       right.push(createPageLink(current+1, current+2, handleClick))
       right.push(NoopRight)
       right.push(createPageLink(total-1, total, handleClick))
     }
+
+    left.push(currentEle)
     return left.concat(right)
   }
 
