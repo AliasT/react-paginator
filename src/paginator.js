@@ -61,7 +61,29 @@ export default class Paginator extends React.Component {
 
     let result = null
 
-    return result
+
+    const d_to_left = current - 1   // distance to left
+    const d_to_right = total -1     // distance to right
+
+    let left  = []
+    let right = []
+
+    if (d_to_left <= 6) {
+      left.push(createPageLink(1, current - 1, handleClick))
+    } else {
+      left.push(createPageLink(1, 2, handleClick))
+      left.push(NoopLeft)
+      left.push(createPageLink(current-2, current-1, handleClick))
+    }
+
+    if (d_to_right <= 6) {
+      right.push(createPageLink(current+1, total))
+    } else {
+      right.push(createPageLink(current+1, current+2, handleClick))
+      right.push(NoopRight)
+      right.push(createPageLink(total-1, total, handleClick))
+    }
+    return left.concat(right)
   }
 
   render () {
