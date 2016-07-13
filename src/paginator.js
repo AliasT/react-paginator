@@ -30,7 +30,7 @@ class PaginatorLink extends React.Component {
 function createPageLink (start, end, onClick) {
   let pages = []
   for (let i = start; i <= end; i++) {
-    pages.push(<PaginatorLink index={i} onClick={onClick} key={i}></PaginatorLink>)
+    pages.push(<PaginatorLink index={i} onClick={onClick.bind(this)} key={i}></PaginatorLink>)
   }
   return pages
 }
@@ -51,42 +51,50 @@ export default class Paginator extends React.Component {
    *
    */
   pagination () {
-    const total = this.state.pages
-    const current = this.state.current
+    createPageLink = createPageLink.bind(this)
+    const total       = this.state.pages
+    const current     = this.state.current
     const handleClick = this.handleClick
-    const currentEle = <PaginatorLink className="current" key="current-ele" index={current} onClick={handleClick}></PaginatorLink>
-    const NoopLeft = <NoopEle key="left-ele"/>
-    const NoopRight = <NoopEle key="right-ele"/>
+    const currentEle  = <PaginatorLink className="current" key="current-ele" index={current} onClick={handleClick}></PaginatorLink>
+    const NoopLeft    = <NoopEle key="left-ele"/>
+    const NoopRight   = <NoopEle key="right-ele"/>
 
     let result = null
 
-    if (total < 7) {
+    // 9 个以下直接显示
+    if (total < 9) {
       result = createPageLink(1, current - 1, handleClick)
       result.push(currentEle)
       result.push(createPageLink(current + 1, total, handleClick))
       return result
     }
 
-    if (current - 2 <= 3) {
-      result = createPageLink(1, current-1, handleClick)
+    if (current - 2 < 4) {
+      result = createPageLink(1,  current-1, handleClick)
       result.push(currentEle)
-      result.push(createPageLink(current+1,  5, handleClick))
-      result.push(NoopRight)
+      result.push(createPageLink(current+1, Math.max(current+2, 5), handleClick))
+      if (total - current >= 5) {
+        result.push(NoopRight)
+      }
+
       result.push(createPageLink(total-1, total, handleClick))
       return result
     }
 
-    if (current >= total - 5 && current <= total) {
+    if (total - current <= 5) {
+      debugger
       result = createPageLink(1, 2, handleClick)
-      result.push(<NoopEle key="left-ele"/>)
-      result.push(createPageLink(total - 5, current-1, handleClick))
+      if (current - 1 >= 6) {
+        result.push(NoopLeft)
+      }
+      result.push(createPageLink(Math.min(total-6, current-2), current-1, handleClick))
       result.push(currentEle)
       result.push(createPageLink(current+1, total, handleClick))
       return result
     }
 
     result = createPageLink(1, 2, handleClick)
-    result.push(<NoopEle key="left-ele"/>)
+    result.push(NoopLeft)
 
     result.push(createPageLink(current-2, current-1, handleClick))
     result.push(currentEle)
@@ -137,7 +145,9 @@ export default class Paginator extends React.Component {
    */
   handleClick (event, index) {
     event.preventDefault()
-    console.log(index)
+    this.setState({
+      current: index
+    })
   }
 
 }
