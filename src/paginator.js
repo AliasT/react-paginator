@@ -76,12 +76,25 @@ export default class Paginator extends React.Component {
       return result
     }
 
+    if (current >= total - 5 && current <= total) {
+      result = createPageLink(1, 2, handleClick)
+      result.push(<NoopEle key="left-ele"/>)
+      result.push(createPageLink(total - 5, current-1, handleClick))
+      result.push(currentEle)
+      result.push(createPageLink(current+1, total, handleClick))
+      return result
+    }
 
     result = createPageLink(1, 2, handleClick)
     result.push(<NoopEle key="left-ele"/>)
-    result.push(createPageLink(current - 2, current + 2, handleClick))
-    return result
 
+    result.push(createPageLink(current-2, current-1, handleClick))
+    result.push(currentEle)
+    result.push(createPageLink(current+1, current+2, handleClick))
+
+    result.push(NoopRight)
+    result.push(createPageLink(total-1, total, handleClick))
+    return result
   }
 
   render () {
@@ -103,6 +116,14 @@ export default class Paginator extends React.Component {
    */
   handleClickSpecial (event, direction) {
     event.preventDefault()
+    if (this.state.current === this.state.pages && direction === 1) {
+      return
+    }
+
+    if (this.state.current === 1 && direction == -1) {
+      return
+    }
+
     this.setState({
       current: this.state.current + direction
     })
@@ -116,7 +137,7 @@ export default class Paginator extends React.Component {
    */
   handleClick (event, index) {
     event.preventDefault()
-
+    console.log(index)
   }
 
 }
