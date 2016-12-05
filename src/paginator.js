@@ -8,14 +8,21 @@ import '../sass/paginator.scss'
  *
  */
 
-function noop () {}
 
+
+/**
+ * 分页省略号
+ */
 class NoopEle extends React.Component {
   render () {
     return <a className="cell" href="javascript:void(0);">...</a>
   }
 }
 
+
+/**
+ * 真正带有数字的链接
+ */
 class PaginatorLink extends React.Component {
   render () {
     let index = this.props.index
@@ -27,15 +34,9 @@ class PaginatorLink extends React.Component {
 }
 
 
-function createPageLink (start, end, onClick) {
-  let pages = []
-  for (let i = start; i <= end; i++) {
-    pages.push(<PaginatorLink index={i} onClick={onClick.bind(this)} key={i}></PaginatorLink>)
-  }
-  return pages
-}
-
-
+/**
+ * 分页
+ */
 export default class Paginator extends React.Component {
   constructor (props, context) {
     super(props, context)
@@ -46,16 +47,34 @@ export default class Paginator extends React.Component {
     }
   }
 
+  createPageLink (start, end, onClick) {
+    let pages = []
+
+    for (let i = start; i <= end; i++) {
+      pages.push(<PaginatorLink index={i} onClick={onClick.bind(this)} key={i}></PaginatorLink>)
+    }
+
+    return pages
+  }
+
   /**
    * 主逻辑
    *
    */
-  pagination () {
-    createPageLink = createPageLink.bind(this)
+   pagination () {
     const total       = this.state.pages
     const current     = this.state.current
     const handleClick = this.handleClick
-    const currentEle  = <PaginatorLink className="current" key="current-ele" index={current} onClick={handleClick.bind(this)}></PaginatorLink>
+
+    const currentEle  = (
+      <PaginatorLink
+        className="current"
+        key="current-ele"
+        index={current}
+        onClick={handleClick.bind(this)}>
+      </PaginatorLink>
+    )
+
     const NoopLeft    = <NoopEle key="left-ele"/>
     const NoopRight   = <NoopEle key="right-ele"/>
 
@@ -66,33 +85,23 @@ export default class Paginator extends React.Component {
     let right = []
 
     if (d_to_left < 6) {
-      left.push(createPageLink(1, current - 1, handleClick))
+      left.push(this.createPageLink(1, current - 1, handleClick))
     } else {
-      left.push(createPageLink(1, 2, handleClick))
+      left.push(this.createPageLink(1, 2, handleClick))
       left.push(NoopLeft)
-      left.push(createPageLink(current-2, current-1, handleClick))
+      left.push(this.createPageLink(current-2, current-1, handleClick))
     }
 
     if (d_to_right < 6) {
-      right.push(createPageLink(current+1, total, handleClick))
+      right.push(this.createPageLink(current+1, total, handleClick))
     } else {
-      right.push(createPageLink(current+1, current+2, handleClick))
+      right.push(this.createPageLink(current+1, current+2, handleClick))
       right.push(NoopRight)
-      right.push(createPageLink(total-1, total, handleClick))
+      right.push(this.createPageLink(total-1, total, handleClick))
     }
 
     left.push(currentEle)
     return left.concat(right)
-  }
-
-  render () {
-    return (
-      <div className="clearfix paginator">
-        <a href="prev" className="cell" onClick={ (e) => this.handleClickSpecial(e, -1) }>prev</a>
-        {this.pagination()}
-        <a href="next" className="cell" onClick={ (e) => this.handleClickSpecial(e, 1) }>next</a>
-      </div>
-    )
   }
 
 
@@ -127,7 +136,19 @@ export default class Paginator extends React.Component {
     event.preventDefault()
     this.setState({
       current: index
+    }, () => {
+      this.props.onClick && this.props.onClick(index)
     })
   }
 
+
+  render () {
+    return (
+      <div className="clearfix paginator">
+        <a href="prev" className="cell" onClick={ (e) => this.handleClickSpecial(e, -1) }>prev</a>
+        {this.pagination()}
+        <a href="next" className="cell" onClick={ (e) => this.handleClickSpecial(e, 1) }>next</a>
+      </div>
+    )
+  }
 }

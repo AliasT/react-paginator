@@ -1,7 +1,7 @@
 var path = require("path");
 module.exports = {
   entry: {
-    app: ["./main.js"]
+    app: ["./example/main.js"]
   },
   output: {
     path: path.resolve(__dirname, './assets'),
