@@ -61,9 +61,14 @@ export default class Paginator extends React.Component {
    * 主逻辑
    *
    */
-   pagination () {
+  pagination () {
     const total       = this.state.pages
     const current     = this.state.current
+
+    if (current > total ) {
+      throw new Error('out of index')
+    }
+
     const handleClick = this.handleClick
 
     const currentEle  = (
@@ -84,18 +89,32 @@ export default class Paginator extends React.Component {
     let left  = []
     let right = []
 
+    let i, j
+
+    if (current <= 3) {
+      j = 5
+    } else {
+      j = current + 2
+    }
+
+    if (current >= total - 2) {
+      i = total - 4
+    } else {
+      i = current - 2
+    }
+
     if (d_to_left < 6) {
       left.push(this.createPageLink(1, current - 1, handleClick))
     } else {
       left.push(this.createPageLink(1, 2, handleClick))
       left.push(NoopLeft)
-      left.push(this.createPageLink(current-2, current-1, handleClick))
+      left.push(this.createPageLink(i, current-1, handleClick))
     }
 
     if (d_to_right < 6) {
       right.push(this.createPageLink(current+1, total, handleClick))
     } else {
-      right.push(this.createPageLink(current+1, current+2, handleClick))
+      right.push(this.createPageLink(current+1, j, handleClick))
       right.push(NoopRight)
       right.push(this.createPageLink(total-1, total, handleClick))
     }
