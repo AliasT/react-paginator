@@ -47,11 +47,11 @@ export default class Paginator extends React.Component {
     }
   }
 
-  createPageLink (start, end, onClick) {
+  createPageLink (start, end) {
     let pages = []
 
     for (let i = start; i <= end; i++) {
-      pages.push(<PaginatorLink index={i} onClick={onClick.bind(this)} key={i}></PaginatorLink>)
+      pages.push(<PaginatorLink index={i} onClick={this.handleClick.bind(this)} key={i}></PaginatorLink>)
     }
 
     return pages
@@ -65,18 +65,17 @@ export default class Paginator extends React.Component {
     const total       = this.state.pages
     const current     = this.state.current
 
-    if (current > total ) {
+    if (current > total) {
       throw new Error('out of index')
     }
 
-    const handleClick = this.handleClick
 
     const currentEle  = (
       <PaginatorLink
         className="current"
         key="current-ele"
         index={current}
-        onClick={handleClick.bind(this)}>
+        onClick={this.handleClick.bind(this)}>
       </PaginatorLink>
     )
 
@@ -104,19 +103,19 @@ export default class Paginator extends React.Component {
     }
 
     if (d_to_left < 6) {
-      left.push(this.createPageLink(1, current - 1, handleClick))
+      left.push(this.createPageLink(1, current - 1))
     } else {
-      left.push(this.createPageLink(1, 2, handleClick))
+      left.push(this.createPageLink(1, 2))
       left.push(NoopLeft)
-      left.push(this.createPageLink(i, current-1, handleClick))
+      left.push(this.createPageLink(i, current-1))
     }
 
     if (d_to_right < 6) {
-      right.push(this.createPageLink(current+1, total, handleClick))
+      right.push(this.createPageLink(current+1, total))
     } else {
-      right.push(this.createPageLink(current+1, j, handleClick))
+      right.push(this.createPageLink(current+1, j))
       right.push(NoopRight)
-      right.push(this.createPageLink(total-1, total, handleClick))
+      right.push(this.createPageLink(total-1, total))
     }
 
     left.push(currentEle)
